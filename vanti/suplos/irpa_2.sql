@@ -1,4 +1,3 @@
---CREATE TABLE `datalake-vanti.integracion_suplos.t2` AS
 SELECT 
 NULLIF(MSG, "") AS status_recepcion
 , NULLIF(BUKRS, "") AS sociedad
@@ -16,16 +15,8 @@ NULLIF(MSG, "") AS status_recepcion
     ELSE "Cancelado desde transacción ZFI_IRPA003"
   END AS estado
 , NULLIF(BLART, "") AS clase_documento
-, CASE
-    WHEN BLDAT IS NULL THEN NULL
-    WHEN DATE(BLDAT) < DATE('1900-01-01') OR DATE(BLDAT) > DATE('2100-01-01') THEN NULL
-    ELSE BLDAT
-  END AS fecha_documento
-, CASE
-    WHEN DOC_DATE_SIGNED IS NULL THEN NULL
-    WHEN DATE(DOC_DATE_SIGNED) < DATE('1900-01-01') OR DATE(DOC_DATE_SIGNED) > DATE('2100-01-01') THEN NULL
-    ELSE DOC_DATE_SIGNED
-  END AS fecha_radicado
+, BLDAT AS fecha_documento
+, DOC_DATE_SIGNED AS fecha_radicado
 , NULLIF(PARTNER,"" ) AS socio_comercial
 , NULLIF(STCD1, "") AS identificador_proveedor
 , NULLIF(STCD2, "") AS identificador_soc_vanti
@@ -36,5 +27,7 @@ NULLIF(MSG, "") AS status_recepcion
 , NULLIF(CONTRATO, "") AS numero_contrato
 , IMIVA AS base_importe_iva
 from `datalake-vanti.qa_raw_sap.zfi_t_irpa003`
+WHERE DATE(BLDAT) < DATE('1900-01-01') OR DATE(BLDAT) > DATE('2100-01-01')
+AND DATE(DOC_DATE_SIGNED) < DATE('1900-01-01') OR DATE(DOC_DATE_SIGNED) > DATE('2100-01-01') 
 --PARTITION BY
 --CLUSTER BY

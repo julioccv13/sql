@@ -12,8 +12,8 @@ ca.clase_documento AS tipo_documento
 , MAX(ca.fec_compensacion) AS fecha_pago
 , SUM(ca.imp_mon_local) AS aplicacion
 , CASE 
-    WHEN AVG(CAST(ca.sts_compensacion AS INT64)) = 9 THEN "pago total"
-    WHEN AVG(CAST(ca.sts_compensacion AS INT64)) > 0 THEN "pago parcial"
+    WHEN AVG(SAFE_CAST(ca.sts_compensacion AS INT64)) = 9 THEN "pago total"
+    WHEN AVG(SAFE_CAST(ca.sts_compensacion AS INT64)) > 0 THEN "pago parcial"
     ELSE "no pago" 
   END AS estado_pago
 , (r.impor_mon_transaccion - SUM(ca.imp_mon_local)) AS saldo_factura
@@ -27,9 +27,9 @@ AND ca.num_doc_oficial NOT IN ('INV', 'NOT_NUM_OFICIAL')
 AND ca.doc_compensacion IS NOT NULL
 AND imp_mon_local > 100
 
-AND r.fec_contab_documento = '2021-04-28'  AND r.num_doc_oficial = 'F24I3269800'
-AND d.fec_contab_documento = '2021-04-28'
-AND ca.fec_contab_documento = '2021-04-28'
+AND r.fec_contab_documento BETWEEN '2021-04-01' AND '2021-04-30'-- AND r.num_doc_oficial = 'F24I3269800'
+AND d.fec_contab_documento BETWEEN '2021-04-01' AND '2021-04-30'
+AND ca.fec_contab_documento BETWEEN '2021-04-01' AND '2021-04-30'
 GROUP BY 
 ca.clase_documento
 , ca.num_doc_oficial
